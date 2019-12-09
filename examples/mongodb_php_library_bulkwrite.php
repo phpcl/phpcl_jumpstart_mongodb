@@ -4,13 +4,13 @@ include __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
 
 // test data
-$bulk_op = [
-    ['insertOne' => [['first' => 'Fred','last' => 'Flintstone','active' => 1]]],
-    ['insertOne' => [['first' => 'Wilma','last' => 'Flintstone','active' => 1]]],
-    ['insertOne' => [['first' => 'Barney','last' => 'Rubble','active' => 0]]],
-    ['insertOne' => [['first' => 'Betty','last' => 'Rubble','active' => 0]]],
-    ['updateOne' => [['first' => 'Betty'], ['$set' => ['active' => 1]]]],
-    ['deleteOne' => [['first' => 'Barney']]]
+$bulkDoc = [
+    ['insertOne' => [['key' => 'FRF', 'first' => 'Fred',  'last' => 'Flintstone', 'active' => 1]]],
+    ['insertOne' => [['key' => 'WIF', 'first' => 'Wilma', 'last' => 'Flintstone', 'active' => 1]]],
+    ['insertOne' => [['key' => 'BAR', 'first' => 'Barney','last' => 'Rubble',     'active' => 0]]],
+    ['insertOne' => [['key' => 'BER', 'first' => 'Betty', 'last' => 'Rubble',     'active' => 0]]],
+    ['updateOne' => [['key' => 'BER'], ['$set'  =>  ['active'  =>  1]]]],
+    ['deleteOne' => [['key' => 'BAR']]]
 ];
 try {
 
@@ -21,15 +21,17 @@ try {
     $client->test->users->drop();
 
     // write test data using bulkWrite
-    $client->test->users->bulkWrite($bulk_op);
+    $client->test->users->bulkWrite($bulkDoc);
 
     // fetch all documents
-    $query = $client->test->users->find();
+    $query = $client->test->users->find([],['projection' => ['_id' => 0]]);
 
     // output results
-    foreach ($query as $document) {
-      var_dump($document);
-    }
+    printf("%4s : %12s : %12s : %s\n", 'Key', 'First', 'Last', 'Status');
+    printf("%4s : %12s : %12s : %s\n", '----', '------------', '------------', '------');
+    foreach ($query as $document)
+        vprintf("%4s : %12s : %12s : %2d\n", $document->getArrayCopy());
+
 } catch (Throwable $t) {
     echo $t->getMessage();
 }
