@@ -1,7 +1,13 @@
 # phpcl_jumpstart_mongodb
 Source Code for PHP-CL MongoDB JumpStart Course
 
-## VM
+## Host Computer
+
+The commands listed here, for the most part, must be performed either by root (Windows: administrator), or a user with root access (e.g. member of `sudoers` group).
+
+For Windows installations, it is recommended that you install [Git for Windows](https://gitforwindows.org/).  You can then use the `bash` shell included with this product to run the commands exactly as in these instructions.
+
+To configure your computer to run the examples in the PHP-CL JumpStart:MongoDB, proceed as follows:
 * Install `docker`
   * CentOS: https://docs.docker.com/install/linux/docker-ce/centos/#install-docker-ce
   * Debian: https://docs.docker.com/install/linux/docker-ce/debian/
@@ -9,69 +15,98 @@ Source Code for PHP-CL MongoDB JumpStart Course
   * Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/
   * Windows: https://docs.docker.com/docker-for-windows/install/
   * Mac: https://docs.docker.com/docker-for-mac/install/
-* Pull latest `Linux for PHP` image:
-  * See: https://hub.docker.com/r/asclinux/linuxforphp-8.1-ultimate/tags/
+* Pull latest `mongo` image:
+  * See: https://hub.docker.com/_/mongo/
 ```
-docker pull asclinux/linuxforphp-8.1-ultimate:7.4-nts
+docker pull mongo
 ```
-* Create a volume `jumpstart_mongodb`
+* Create a directory on your computer to hold MongoDB data
+  * In this README the home directory will be referred to as `/path/to/home`
+  * NOTE: if using the Git Bash Shell in Windows, the home directory will be `/c/Users/<username>`
 ```
-docker volume create jumpstart_mongodb
+mkdir /path/to/home/mongodb/data
 ```
-* Identify the location
+* Run the MongoDB image and mount the volume that maps MongoDB data to the new directory just created:
 ```
-docker volume ls
-docker volume inspect jumpstart_mongodb
+docker run --name phpcl_jumpstart_mongodb -v /path/to/home/mongodb/data:/data/db -d mongo
 ```
-* Run PHP for Linux image and mount the volume
-```
-docker run -dit --restart=always --name phpcl_jumpstart_doctrine -v ${PWD}/:/srv/www -p 8181:80 -p 10443:443 -p 2222:22 --mount source=jumpstart_mongodb,target=/srv/jumpstart asclinux/linuxforphp-8.1-ultimate:7.3-nts lfphp
-```
-* Get container ID
+* Verify the container is running
 ```
 docker container ls
 ```
-* Open a shell to the container
+* Verify that MongoDB is writing data to the directory you created above
+```
+ls -l /path/to/home/mongodb/data
+```
+
+## Inside the Container
+All the following commands are executed from a container shell
+
+* If not already in the container shell, open a shell to the container:
 ```
 docker exec -it <container_ID> /bin/bash
 // or
-docker exec -it phpcl_jumpstart_doctrine /bin/bash
+docker exec -it phpcl_jumpstart_mongodb /bin/bash
 ```
-* Create directories to hold the MongoDB datbase and log files
+* Install PHP 7.4
 ```
-mkdir /srv/jumpstart/mongodb
-mkdir /srv/jumpstart/mongodb/lib
-mkdir /srv/jumpstart/mongodb/log
+apt-get update
+apt-get upgrade
+apt-get -y install software-properties-common
+add-apt-repository ppa:ondrej/php
+apt-get update
+apt-get -y install php7.4
 ```
-* Remove existing version of MongoDB from the image
-  *
-* Install MongoDB
-  * See: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition-on-ubuntu
-  * In the `/etc/mongod.conf` file set the following:
-    * `storage.dbPath` to `/srv/jumpstart/mongodb/lib`
-    * `systemLog.path` to `/srv/jumpstart/mongodb/log`
+* Confirm PHP installation
+```
+php --version
+```
+* Install PHP 7.4 support modules
+```
+apt-get -y install php-pear php7.4-curl php7.4-dev php7.4-gd php7.4-mbstring php7.4-zip php7.4-mysql php7.4-xml
+```
 * Install MongoDB PHP Driver
   * See: https://www.php.net/manual/en/mongodb.installation.pecl.php
-  * See: https://docs.mongodb.com/php-library/current/tutorial/install-php-library/
+```
+pecl install mongodb
+```
+* Install `git`
+```
+apt-get -y install git
+```
+* Set up a "home" directory
+```
+mkdir /home/root
+```
+
+## Restore course repo
+All command listed below are issued from inside the Docker container with MongoDB and PHP 7.4
+
+* If not already in the container shell, open a shell to the container:
+```
+docker exec -it <container_ID> /bin/bash
+// or
+docker exec -it phpcl_jumpstart_mongodb /bin/bash
+```
 * Restore files from repo for course
 ```
-cd /srv/jumpstart
+cd /home/root
 git clone https://github.com/phpcl/phpcl_jumpstart_mongodb
 ```
-* Restore sample data
+* Restore the sample data
 ```
-cd /srv/jumpstart/phpcl_jumpstart_mongodb
+cd /home/root/phpcl_jumpstart_mongodb
 mongo sample_data/jumpstart_events_insert.js
 mongo sample_data/jumpstart_hotels_insert.js
 mongo sample_data/jumpstart_signups_insert.js
 mongo sample_data/jumpstart_users_insert.js
 mongo sample_data/jumpstart_zips_insert.js
 ```
-* Connect repo to container web server
+* Install the MongoDB PHP Library
+  * See: https://docs.mongodb.com/php-library/current/tutorial/install-php-library/
 ```
-ln -s /srv/jumpstart/phpcl_jumpstart_doctrine /srv/www/jumpstart
+cd /home/root/phpcl_jumpstart_mongodb
+php composer.phar install
 ```
-* Access container web site from your browser
-```
-http://localhost:8181/jumpstart
-```
+
+You are now ready to run the examples.
