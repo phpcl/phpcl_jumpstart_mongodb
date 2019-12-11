@@ -50,6 +50,9 @@ try {
     foreach ($query as $doc)
         vprintf("%2d : %10s : %16s\n", $doc->getArrayCopy());
 
+    echo PHP_EOL;
+    var_dump($result);
+
 } catch (Throwable $t) {
     echo $t->getMessage() . PHP_EOL;
 }

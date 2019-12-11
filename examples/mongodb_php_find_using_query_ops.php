@@ -50,19 +50,6 @@ try {
     echo $t->getMessage();
 }
 
-$client->$db->events->find(
-[
-    '$and'=> [
-        "eventDate" => ["$lt"=>"2020-09-01"],
-        "eventDate" => ["$gte"=>"2020-06-01"]
-    ]
-],
-[
-    'projection' => ["eventName"=>1],
-    'sort' => ["eventDate" => 1]
-]
-);
-
 // model query:
 /*
 filter = { "$and" : [

@@ -3,12 +3,12 @@ db = conn.getDB("jumpstart");
 db.users.drop();
 db.users.insertOne(
 {
-    "userKey": "JUDIRAYM5691",
+    "userKey": "ANDRCAYA0001",
     "name": {
-        "title": "Ms",
-        "first": "Judi",
-        "middle": "H",
-        "last": "Raymond",
+        "title": "Mr",
+        "first": "Andrew",
+        "middle": "B",
+        "last": "Caya",
         "suffix": null
     },
     "address": {
@@ -16,57 +16,50 @@ db.users.insertOne(
         "buildingName": null,
         "floor": null,
         "roomAptCondoFlat": null,
-        "city": "Ruibhar",
-        "locality1": "Osmanabad",
-        "locality2": "Osmanabad",
-        "country": "IN",
-        "postalCode": "413582",
+        "city": "Quebec City",
+        "locality1": "QC",
+        "locality2": "Quebec",
+        "country": "CA",
+        "postalCode": "A1A 1A1",
         "geoSpatial": [
             "75.65",
             "18.3354"
         ]
     },
     "contact": {
-        "email": "jraymond100@telecom.com",
+        "email": "acaya@php-cl.com",
         "phone": "100-823-5691",
         "socMedia": {
-            "google": "jraymond@google.com"
+            "twitter": "andyc@twitter.com"
         }
     },
     "login": {
-        "username": "jraymond",
-        "oauth2": "jraymond@google.com",
+        "username": "acaya",
+        "oauth2": "andrew.caya@google.com",
         "password": "$2y$10$5cr\/vvqzv3.MEo1vpwz1gO4VtgahF.VMiJZ6Y.cw4DjcMlKxV5fYm"
     },
     "otherContact": {
         "emails": [
-            "jraymond100@ui.com",
-            "jraymond100@uunet.com",
-            "jraymond100@sktelecom.com"
+            "andrew.caya@etista.com",
         ],
         "phoneNumbers": [
             "100-402-0908",
-            "100-199-0404",
-            "100-902-4387"
         ],
         "socMedias": [
             {
-                "skype": "jraymond@skype.com"
+                "skype": "acaya@skype.com"
             },
             {
-                "google": "jraymond@google.com"
-            },
-            {
-                "facebook": "jraymond@facebook.com"
+                "facebook": "sir.andrew@facebook.com"
             }
         ]
     },
     "otherInfo": {
-        "gender": "F",
-        "dateOfBirth": "1994-09-16"
+        "gender": "N",
+        "dateOfBirth": "1970-01-01"
     },
     "partner": "Y",
-    "businessName": "Bizarro Industries LLC"
+    "businessName": "FCF Continuous Learning"
 });
 db.users.insertOne(
 {

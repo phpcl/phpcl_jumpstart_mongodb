@@ -26,7 +26,7 @@ try {
     printf("%12s | %12s | %25s | %20s\n",
         str_repeat('-', 12), str_repeat('-', 12), str_repeat('-', 25), str_repeat('-', 20));
     foreach ($query as $doc) {
-        printf("%12s | %12s | %25s | %20s\n",
+        printf("%12s | %12s | %30s | %20s\n",
             $doc->userInfo->name->first,
             $doc->userInfo->name->last,
             $doc->userInfo->contact->email,

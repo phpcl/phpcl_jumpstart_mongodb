@@ -15,10 +15,10 @@ function displayInfo($doc, $label)
 }
 
 // sample data
-$key        = 'ALTOBEAN9560';
+$key        = 'ANDRCAYA0001';
 $newPhone   = rand(100,999) . '-' . rand(100,999) . '-' . rand(1000,9999);
-$newEmail   = 'mr.bean' . rand(1000,9999);
-$newSoc     = 'test' . rand(1000,9999);
+$newEmail   = 'andrew.caya' . rand(1000,9999);
+$newSoc     = 'php-cl' . rand(1000,9999);
 
 // build update args
 $db   = 'jumpstart';
@@ -28,8 +28,7 @@ $updateDoc  = [
     '$set' => [ 'contact.phone' => $newPhone ],
     '$push' => [ 'otherContact.socMedias' =>
         [ $newSoc => $newEmail . '@' . $newSoc  . '.com']
-    ]
-];
+]];
 
 try {
 
@@ -54,13 +53,13 @@ try {
 // JSON op to model:
 /*
 use jumpstart;
-key    = 'ALTOBEAN9560'
+key    = 'ANDRCAYA0001'
 projection = { "contact" : 1, "otherContact.socMedias" : 1 }
 filter = { "userKey" : key }
 update = {
     "$set" : { "contact.phone" : "111-222-3333" },
     "$push" : { "otherContact.socMedias" :
-        { "github" : "judy.raymond@github.com"}
+        { "php-cl" : "andrew.caya@php-cl.com"}
     }
 }
 db.users.findOne(filter);
