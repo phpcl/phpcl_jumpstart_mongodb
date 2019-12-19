@@ -15,20 +15,66 @@ To configure your computer to run the examples in the PHP-CL JumpStart:MongoDB, 
   * Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/
   * Windows: https://docs.docker.com/docker-for-windows/install/
   * Mac: https://docs.docker.com/docker-for-mac/install/
+
+* Create a directory on your computer to hold MongoDB data
+  * In this README the home directory will be referred to as `path/to/course`
+  * NOTE: if using the Git Bash Shell in Windows, the home directory will be `/c/Users/<username>`
+```
+mkdir path/to/course/data
+```
+
+* If you get permissions errors, make sure a group `docker` exists, and then add your current user to that group.
+  * See: https://stackoverflow.com/questions/48957195/how-to-fix-docker-got-permission-denied-issue
+```
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
+
+## Build (or Pull) Docker Image
+You only need to do 1 of the three approaches described here.
+
+### Pull the image from docker hub
+* Pull the image
+```
+docker pull unlikelysource/mongodb_php:latest
+```
+* Run a container from the image
+```
+docker run -d --name phpcl_jumpstart_mongodb -v path/to/course/data:/data/db unlikelysource/mongodb_php:latest
+```
+
+### Build the Image Using the Dockerfile
+* Create an empty directory on your computer `path/to/course/mongodb`
+* Change to this directory
+```
+cd path/to/course/mongodb
+```
+* Create a file `path/to/course/mongodb/Dockerfile`
+```
+touch path/to/course/mongodb/Dockerfile
+```
+* Paste cut and paste into the file `path/to/course/mongodb/Dockerfile` from here:
+  * [https://github.com/phpcl/phpcl_jumpstart_mongodb/blob/master/Dockerfile](https://github.com/phpcl/phpcl_jumpstart_mongodb/blob/master/Dockerfile)
+* Use `docker` to build an image from the docker file
+```
+docker build unlikelysource/mongodb_php .
+```
+* Run a container from the image
+```
+docker run -d --name phpcl_jumpstart_mongodb -v path/to/course/data:/data/db unlikelysource/mongodb_php
+```
+
+### Build the Image Manually
+Skip this section if you've already built the image using the `Dockerfile`!
+
 * Pull latest `mongo` image:
   * See: https://hub.docker.com/_/mongo/
 ```
 docker pull mongo
 ```
-* Create a directory on your computer to hold MongoDB data
-  * In this README the home directory will be referred to as `/path/to/home`
-  * NOTE: if using the Git Bash Shell in Windows, the home directory will be `/c/Users/<username>`
+* Run a container from the MongoDB image, mounting the volume that maps MongoDB data to the data directory:
 ```
-mkdir /path/to/home/mongodb/data
-```
-* Run the MongoDB image and mount the volume that maps MongoDB data to the new directory just created:
-```
-docker run --name phpcl_jumpstart_mongodb -v /path/to/home/mongodb/data:/data/db -d mongo
+docker run -d --name phpcl_jumpstart_mongodb -v path/to/course/data:/data/db mongo
 ```
 * Verify the container is running
 ```
@@ -36,13 +82,9 @@ docker container ls
 ```
 * Verify that MongoDB is writing data to the directory you created above
 ```
-ls -l /path/to/home/mongodb/data
+ls -l path/to/course/data
 ```
-
-## Inside the Container
-All the following commands are executed from a container shell
-
-* If not already in the container shell, open a shell to the container:
+* Open a shell to the container:
 ```
 docker exec -it <container_ID> /bin/bash
 // or
@@ -68,6 +110,7 @@ apt-get -y install php-pear php7.4-curl php7.4-dev php7.4-gd php7.4-mbstring php
 * Install MongoDB PHP Driver
   * See: https://www.php.net/manual/en/mongodb.installation.pecl.php
 ```
+pecl update-channels
 pecl install mongodb
 ```
 * Install `git`
@@ -79,9 +122,12 @@ apt-get -y install git
 mkdir /home/root
 ```
 
-## Restore course repo
-All command listed below are issued from inside the Docker container with MongoDB and PHP 7.4
-
+## Course Setup
+Complete these steps after pulling or building the image.
+* Verify the container you created using any of the methods above is running:
+```
+docker container ls
+```
 * If not already in the container shell, open a shell to the container:
 ```
 docker exec -it <container_ID> /bin/bash
@@ -108,5 +154,15 @@ mongo sample_data/jumpstart_zips_insert.js
 cd /home/root/phpcl_jumpstart_mongodb
 php composer.phar install
 ```
+* Test the MongoDB PHP extension:
+```
+cd /home/root/phpcl_jumpstart_mongodb
+php examples/mongodb_php_ext_test.php
+```
+* Test the MongoDB PHP library:
+```
+cd /home/root/phpcl_jumpstart_mongodb
+php examples/mongodb_php_library_test.php
+```
 
-You are now ready to run the examples.
+You are now ready to run the examples!
