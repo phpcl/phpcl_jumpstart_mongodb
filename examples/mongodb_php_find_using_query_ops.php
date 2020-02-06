@@ -11,7 +11,7 @@ try {
     // execute query
     $filter  = [
         '$and' => [[
-            'userInfo.otherInfo.gender' => 'M',
+            'userInfo.otherInfo.gender' => 'F',
             '$or' => [[
                 'eventInfo.hotelInfo.location.country' => 'CA',
                 'eventInfo.hotelInfo.location.country' => 'US'

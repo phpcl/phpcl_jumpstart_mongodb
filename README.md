@@ -43,7 +43,7 @@ docker pull unlikelysource/mongodb_php:latest
 ```
 * Run a container from the image substituting `path/to/course` for the actual director path you created on your host computer.
 ```
-docker run -d --name phpcl_jumpstart_mongodb -v path/to/course/data:/data/db -v path/to/course/code:/home/root/code unlikelysource/mongodb_php:latest
+docker run -d --name jumpstart_mongodb -p 27777:27017 -v path/to/course/data:/data/db -v path/to/course/code:/home/root/code unlikelysource/mongodb_php:latest
 ```
 
 ## Course Setup
@@ -56,7 +56,7 @@ docker container ls
 ```
 docker exec -it <container_ID> /bin/bash
 // or
-docker exec -it phpcl_jumpstart_mongodb /bin/bash
+docker exec -it jumpstart_mongodb /bin/bash
 ```
 * Restore files from git repo for course
 ```
