@@ -1,0 +1,29 @@
+version: "3"
+services:
+  phpcl-jumpstart-mongodb:
+    container_name: phpcl-jumpstart-mongodb
+    hostname: jumpstart1
+    image: phpcl/jumpstart-mongodb
+    volumes:
+     - db_data_jumpstart:/data/db
+     - .:/home/root/code
+     - ./docker/hosts:/etc/hosts
+     - ./docker/mongod.conf:/etc/mongod.conf
+    ports:
+     - 27111:27017
+    build: ./docker
+    restart: always
+    command: -f /etc/mongod.conf
+    networks:
+      app_net:
+        ipv4_address: 172.16.0.11
+
+networks:
+  app_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.0.0/24"
+
+volumes:
+  db_data_jumpstart: {}
