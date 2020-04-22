@@ -5,7 +5,7 @@ services:
     hostname: jumpstart1
     image: phpcl/jumpstart-mongodb
     volumes:
-     - db_data_jumpstart:/data/db
+     - db_data_jumpstart_mongodb:/data/db
      - .:/home/root/code
      - ./docker/hosts:/etc/hosts
      - ./docker/mongod.conf:/etc/mongod.conf
@@ -26,4 +26,4 @@ networks:
         - subnet: "172.16.0.0/24"
 
 volumes:
-  db_data_jumpstart: {}
+  db_data_jumpstart_mongodb: {}

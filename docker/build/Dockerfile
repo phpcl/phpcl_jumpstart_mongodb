@@ -1,9 +1,6 @@
 #
 # MongoDB + PHP 7.4 Dockerfile
 #
-# https://github.com/phpcl/phpcl_jumpstart_mongodb/dockerfile
-# v20191219: digest: sha256:e12db96a7b13abd127eb26080f42fbab9924af021d615cd6d45f8b963b5ddde5 size: 3246
-#
 
 # Pull base image.
 FROM mongo
@@ -12,6 +9,9 @@ FROM mongo
 RUN \
     apt-get update && \
     apt-get -y upgrade && \
+    apt-get -y install vim
+    apt-get -y install inetutils-ping
+    apt-get -y install net-tools
     apt-get -y install software-properties-common && \
     add-apt-repository ppa:ondrej/php && \
     apt-get update && \

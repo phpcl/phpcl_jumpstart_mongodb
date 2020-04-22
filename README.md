@@ -1,7 +1,6 @@
-# phpcl_jumpstart_mongodb
-Source Code for PHP-CL MongoDB JumpStart Course
+# Source Code for PHP-CL MongoDB JumpStart Course
 
-## Host Computer
+## Host Computer Setup
 
 The commands listed here, for the most part, must be performed either by root (Windows: administrator), or a user with root access (e.g. member of `sudoers` group).
 
@@ -15,40 +14,53 @@ To configure your computer to run the examples in the PHP-CL JumpStart:MongoDB, 
   * Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/
   * Windows: https://docs.docker.com/docker-for-windows/install/
   * Mac: https://docs.docker.com/docker-for-mac/install/
-
-* Create a directory on your computer to hold MongoDB data
-  * In this README the home directory will be referred to as `path/to/course`
-  * NOTE: if using the Git Bash Shell in Windows, the directory could be `/c/Users/<username>/jumpstart/data`
-```
-mkdir path/to/course/data
-```
-* Create a directory on your computer to map to the code examples
-  * This path will be used later in these instructions to restore the sample code from the course git repo
-  * NOTE: if using the Git Bash Shell in Windows, the directory could be `/c/Users/<username>/jumpstart/code`
-```
-mkdir path/to/course/code
-```
-
-* If you get permissions errors, make sure a group `docker` exists, and then add your current user to that group.
+* If you get permissions errors when running `docker` commands, make sure a group `docker` exists, and then add your current user to that group.
   * See: https://stackoverflow.com/questions/48957195/how-to-fix-docker-got-permission-denied-issue
 ```
 sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
+* Clone this repository to some directory which is referred to as `/path/to/repo` in this guide
+```
+git clone https://github.com/phpcl/phpcl_jumpstart_mongodb /path/to/repo
+```
 
-## Pull the image from docker hub
-* Pull the image
+## Run the Container
+From a terminal window (command prompt) on your host computer:
+
+### Using Docker Compose (easiest way!)
+* Install [`docker compose`](https://docs.docker.com/compose/install/)
+* Change to the directory for this repository
+```
+cd /path/to/repo
+```
+* Bring the demo environment online using docker-compose
+```
+docker-compose up
+```
+
+### Using Docker (hard way)
+* Download the image
 ```
 docker pull unlikelysource/mongodb_php:latest
 ```
-* Run a container from the image substituting `path/to/course` for the actual director path you created on your host computer.
+* Create a volume to hold MongoDB data
 ```
-docker run -d --name jumpstart_mongodb -p 27777:27017 -v path/to/course/data:/data/db -v path/to/course/code:/home/root/code unlikelysource/mongodb_php:latest
+docker volume create db_data_jumpstart_mongodb
+```
+* Run the image
+```
+docker run -d --name phpcl-jumpstart-mongodb -p 27111:27017 -v db_data_jumpstart_mongodb:/data/db -v /path/to/repo:/home/root/code unlikelysource/mongodb_php:latest
+```
+* Copy the init script
+```
+docker cp ./docker/init.sh phpcl-jumpstart-mongodb:/tmp/init.sh
 ```
 
 ## Course Setup
-Complete these steps after pulling the image.
-* Verify the container you created using any of the methods above is running:
+Complete these steps after getting the container up and running.
+
+* Verify the container is running:
 ```
 docker container ls
 ```
@@ -56,29 +68,61 @@ docker container ls
 ```
 docker exec -it <container_ID> /bin/bash
 // or
-docker exec -it jumpstart_mongodb /bin/bash
+docker exec -it phpcl-jumpstart-mongodb /bin/bash
 ```
-* Restore files from git repo for course
+* Confirm files from git repo for course are available in the container.  At a minimum you should see listed this `README.md` file.
 ```
 cd /home/root/code
-git clone https://github.com/phpcl/phpcl_jumpstart_mongodb
+ls -l
 ```
-* Change to the directory with the restored course git repo code
+* Confirm MongoDB is running
 ```
-cd /home/root/code/phpcl_jumpstart_mongodb
+mongo
+> db.serverStatus();
+> exit;
 ```
-* Restore the sample data
+
+### Restore the sample data using the init script
+There's a file `/tmp/init.sh` that restores the sample data and install the MongoDB PHP Library.
+* Examine the init script
 ```
-mongo sample_data/jumpstart_events_insert.js
-mongo sample_data/jumpstart_hotels_insert.js
-mongo sample_data/jumpstart_signups_insert.js
-mongo sample_data/jumpstart_users_insert.js
-mongo sample_data/jumpstart_zips_insert.js
+cat /tmp/init.sh
+```
+* Run the init script
+```
+/tmp/init.sh
+```
+* For output you should see a reference to the _Flintstones_.
+
+### Restore the sample data using the hard way
+If you prefer to do the setup yourself (good practice!), proceed as follows:
+* Restore the sample data using the `mongo` shell
+```
+mongo /home/root/code/sample_data/jumpstart_events_insert.js
+mongo /home/root/code/sample_data/jumpstart_hotels_insert.js
+mongo /home/root/code/sample_data/jumpstart_signups_insert.js
+mongo /home/root/code/sample_data/jumpstart_users_insert.js
+mongo /home/root/code/sample_data/jumpstart_zips_insert.js
 ```
 * Install the MongoDB PHP Library
   * See: https://docs.mongodb.com/php-library/current/tutorial/install-php-library/
+  * Examine the file `/home/root/code/composer.json`
+  * Run composer install
 ```
+php composer.phar self-update
 php composer.phar install
+```
+
+## Test the MongoDB PHP Extension and Library
+* If not already in the container shell, open a shell to the container:
+```
+docker exec -it <container_ID> /bin/bash
+// or
+docker exec -it phpcl-jumpstart-mongodb /bin/bash
+```
+* Change to the directory mapped to this repo:
+```
+cd /home/root/code
 ```
 * Test the MongoDB PHP extension:
 ```
@@ -88,5 +132,6 @@ php examples/mongodb_php_ext_test.php
 ```
 php examples/mongodb_php_library_test.php
 ```
+* For output you should see a reference to the _Flintstones_.
 
 You are now ready to run the examples!
